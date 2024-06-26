@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Cor de fundo do corpo da página */
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Altura total da viewport */
+}
+
+
+#board {
+    background-color: #202e42; /* Cor de fundo do tabuleiro */
+    border: 2px solid #ccc; /* Borda do tabuleiro */
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Estilos para a pontuação */
+#score {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#score-value {
+    color: #ffcc00; /* Cor do valor da pontuação */
+}
+
+/* Estilos para o tabuleiro do jogo */
+#board {
+    background-color: #202e42; /* Cor de fundo do tabuleiro */
+    border: 2px solid #ccc; /* Borda do tabuleiro */
+    box-sizing: border-box;
+    width: 450px; /* Largura do tabuleiro (15 colunas * 30px por bloco) */
+    height: 600px; /* Altura do tabuleiro (20 linhas * 30px por bloco) */
+    position: relative; /* Importante para posicionar os blocos absolutamente dentro do tabuleiro */
+    margin-bottom: 20px;
+    overflow: hidden; /* Impede que blocos posicionados absolutamente sejam visíveis fora do tabuleiro */
+}
+
+/* Estilos para os blocos individuais */
+.block {
+    position: absolute;
+    width: 30px; /* Largura do bloco */
+    height: 30px; /* Altura do bloco */
+    background-color: #ffcc00; /* Cor dos blocos */
+    border: 1px solid #fff; /* Borda dos blocos */
+    box-sizing: border-box;
+}
