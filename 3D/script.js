@@ -184,67 +184,6 @@ function updatePiecePosition() {
     }
 }
 
-let gameStarted = false;
-
-function startGame() {
-    if (!gameStarted) {
-        gameStarted = true;
-        startTimer();
-        startFalling(); // Função hipotética para iniciar a queda da primeira peça
-    }
-}
-
-function resetGame() {
-    gameStarted = false;
-    resetTimer();
-    resetGameBoard(); // Função hipotética para reiniciar o jogo
-}
-
-// Supondo que as funções startTimer e resetTimer já estejam implementadas conforme o trecho de código anterior
-
-// Função hipotética para iniciar a queda da primeira peça
-function startFalling() {
-    // Define a função que será chamada a cada intervalo de tempo para fazer a peça cair
-    const fall = () => {
-        if (!currentPiece) { // Se não houver uma peça atual, obtém uma nova peça
-            currentPiece = getRandomPiece();
-            currentPiece.position.y = 10; // Posiciona a nova peça no topo
-            scene.add(currentPiece);
-        } else {
-            // Se a peça atual já chegou ao fundo (posição y <= 0), prepara para a próxima peça
-            if (currentPiece.position.y <= 0) {
-                currentPiece = null;
-            } else {
-                // Se a peça ainda não chegou ao fundo, continua a cair
-                currentPiece.position.y -= 0.03;
-            }
-        }
-    };
-
-    // Inicia o loop de queda chamando a função 'fall' a cada 100 milissegundos
-    setInterval(fall, 100);
-}
-
-function resetGameBoard() {
-    // Remove a peça atual do jogo, se houver
-    if (currentPiece) {
-        scene.remove(currentPiece);
-        currentPiece = null;
-    }
-
-    // Limpa todas as peças do tabuleiro
-    // Isso é feito removendo todos os objetos da cena que são do tipo THREE.Group,
-    // que é o tipo usado para agrupar os cubos de cada peça.
-    scene.children = scene.children.filter(child => !(child instanceof THREE.Group));
-
-    // Reinicia o estado do jogo
-    gameStarted = false;
-
-    // Pode-se adicionar mais lógica aqui, se necessário, para reiniciar outros aspectos do jogo
-}
-
-document.getElementById('startButton').addEventListener('click', startGame);
-document.getElementById('resetButton').addEventListener('click', resetGame);
 function animate() {
     requestAnimationFrame(animate);
     dropPiece(); 
