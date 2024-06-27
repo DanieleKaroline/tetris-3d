@@ -1,9 +1,23 @@
 import * as THREE from 'three';
 
 export function createCube(color) {
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshToonMaterial({ color, wireframe: true, wireframeLinecap: 'round' });
+    const geometry = new THREE.BoxGeometry(.9999, .9999, .9999);
+    const material = new THREE.MeshToonMaterial({ color, wireframe: true });
     return new THREE.Mesh(geometry, material);
+}
+
+export function getRandomPiece() {
+    const pieces = [
+        // createIPiece, 
+        createOPiece, 
+        // createZPiece, 
+        // createLPiece, 
+        // createTPiece, 
+        // createJPiece, 
+        // createSPiece
+    ];
+    const index = Math.floor(Math.random() * pieces.length);
+    return pieces[index]();
 }
 
 export function createIPiece() {
@@ -117,18 +131,4 @@ export function createSPiece() {
         group.add(cube);
     });
     return group;
-}
-
-export function getRandomPiece() {
-    const pieces = [
-        // createIPiece, 
-        createOPiece, 
-        // createZPiece, 
-        // createLPiece, 
-        // createTPiece, 
-        // createJPiece, 
-        // createSPiece
-    ];
-    const index = Math.floor(Math.random() * pieces.length);
-    return pieces[index]();
 }

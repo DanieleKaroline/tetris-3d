@@ -1,25 +1,41 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { checker } from 'three/examples/jsm/nodes/Nodes.js';
 import { getRandomPiece } from './pieces.js';
 
 const scene = new THREE.Scene();
-// add ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-// add directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-directionalLight.position.set(10, 15, 10);
-scene.add(directionalLight);
-
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 camera.position.set(6, 5, 30);
 camera.lookAt(0, 0, 0);
-const controls = new OrbitControls(camera, renderer.domElement);
+new OrbitControls(camera, renderer.domElement);
+let currentPiece = null;
 
+
+function init() {
+    createThreeSidedGrid();
+    addLights();
+
+    animate();
+}
+
+
+function addLights() {
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(10, 15, 10);
+    scene.add(directionalLight);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    dropPiece(); 
+    updatePiecePosition(); 
+    renderer.render(scene, camera);
+}
 
 function createThreeSidedGrid() {
     const size = 10;
@@ -46,10 +62,7 @@ function createThreeSidedGrid() {
     scene.add(group);
 }
 
-createThreeSidedGrid();
-
-
-let currentPiece = null;
+init();
 
 function dropPiece() {
     if (currentPiece === null) {
@@ -72,10 +85,10 @@ function updatePiecePosition() {
             }
         }
 
-        // Check if the piece has reached the bottom
-        if (currentPiece && currentPiece.position.y <= -4.5) {
-            currentPiece = null;
-        }
+        // // Check if the piece has reached the bottom; doesn't need because the colision checks
+        // if (currentPiece && currentPiece.position.y <= -5) {
+        //     currentPiece = null;
+        // }
     }
 }
 
@@ -95,18 +108,15 @@ function checkCollision(group1, group2) {
     return false;
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    dropPiece(); 
-    updatePiecePosition(); 
-    renderer.render(scene, camera);
+// checks if current-piece can move or rotate in a certain direction
+// it predics if the boxes contained in the group would collide with the walls or other pieces
+function possibleToMove() {
+
+    return false;
 }
 
-animate();
-
-
 document.addEventListener('keypress', (event) => {
-    if (event.key === 'p') {
+    if (event.key === 'p' ) {
         console.log(currentPiece);
     }
     if (event.key === 'i') {
