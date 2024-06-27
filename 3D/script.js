@@ -11,13 +11,26 @@ camera.position.set(6, 5, 30);
 camera.lookAt(0, 0, 0);
 new OrbitControls(camera, renderer.domElement);
 let currentPiece = null;
+let colisionEnabled = true;
+let gameOver = false;
 
+init();
 
 function init() {
     createThreeSidedGrid();
     addLights();
-
+    setInterval(updatePiecePosition, 500); // Set the interval to half a second
     animate();
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (!gameOver) {
+        dropPiece();
+    }
+
+    renderer.render(scene, camera);
 }
 
 
@@ -30,19 +43,13 @@ function addLights() {
     scene.add(directionalLight);
 }
 
-function animate() {
-    requestAnimationFrame(animate);
-    dropPiece(); 
-    updatePiecePosition(); 
-    renderer.render(scene, camera);
-}
-
 function createThreeSidedGrid() {
     const size = 10;
     const divisions = 10; 
     const color = new THREE.Color("gray"); 
 
     const group = new THREE.Group();
+    group.name = "Grids"
 
     const baseGrid = new THREE.GridHelper(size, divisions, color, color);
     baseGrid.position.y = -size / 2; 
@@ -62,34 +69,43 @@ function createThreeSidedGrid() {
     scene.add(group);
 }
 
-init();
-
 function dropPiece() {
     if (currentPiece === null) {
         currentPiece = getRandomPiece();
-        currentPiece.position.y = 4.5; 
+        currentPiece.position.y = 4.5;
+        currentPiece.name = `Piece (${scene.children.length})`;
         scene.add(currentPiece);
     }
 }
 
 function updatePiecePosition() {
-    if (currentPiece) {
-        currentPiece.position.y -= 0.02;
+    if (currentPiece && colisionEnabled) {
+        currentPiece.position.y -= 1;
 
-        // Check for collision with all other pieces in the scene
-        for (let otherPiece of scene.children) {
-            if (otherPiece !== currentPiece && checkCollision(currentPiece, otherPiece)) {
-                // Collision detected, stop moving the current piece
-                currentPiece = null;
-                break;
+        if (colidesWithSceneObjects(currentPiece)) {
+            currentPiece.position.y += 1;
+            // scene.add(currentPiece);
+
+            if (currentPiece.position.y > 4.4){
+                console.log("Game Over");
+                gameOver = true;
             }
-        }
 
-        // // Check if the piece has reached the bottom; doesn't need because the colision checks
-        // if (currentPiece && currentPiece.position.y <= -5) {
-        //     currentPiece = null;
-        // }
+            currentPiece = null;
+        }
     }
+}
+
+function colidesWithSceneObjects(piece, excludedGroupsUuid = []) {
+    // Check for collision with all other pieces in the scene
+    for (let otherPiece of scene.children) {
+        if (otherPiece !== piece && !excludedGroupsUuid.includes(otherPiece.uuid) && checkCollision(piece, otherPiece)) {
+            // Collision detected, stop moving the current piece
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function checkCollision(group1, group2) {
@@ -100,6 +116,10 @@ function checkCollision(group1, group2) {
             const box2 = new THREE.Box3().setFromObject(obj2);
 
             if (box1.intersectsBox(box2)) {
+                console.log("Collision detected between:\n\t", 
+                    group1.name, "\n\tand", group2.name);
+
+                console.log("Intersection occurs at:", box1.intersect(box2));
                 return true;
             }
         }
@@ -108,11 +128,55 @@ function checkCollision(group1, group2) {
     return false;
 }
 
-// checks if current-piece can move or rotate in a certain direction
-// it predics if the boxes contained in the group would collide with the walls or other pieces
-function possibleToMove() {
+// direction is a char for the wasd or WASD keys
+function possibleToMove(direction) {
+    if (gameOver || !currentPiece) {
+        console.log("Game Over or no current piece");
+        return false;
+    }
 
-    return false;
+    let canMove = true;
+    colisionEnabled = false; // Disable colision behavior so the piece doesn't stop
+
+    let colisionTester = currentPiece.clone();
+    colisionTester.visible = false;
+    scene.add(colisionTester);
+    
+    //if the clone moves to the direction typed and finds a colision, return false
+    switch (direction) {
+        case 'a':
+            moveLeft(colisionTester);
+            break;
+        case 'd':
+            moveRight(colisionTester);
+            break;
+        case 'w':
+            moveUp(colisionTester);
+            break;
+        case 's':
+            moveDown(colisionTester);
+            break;
+        case 'A':
+            rotateClockwise(colisionTester);
+            break;
+        case 'D':
+            rotateCounterClockwise(colisionTester);
+            break;
+        case 'W':
+            rotateUp(colisionTester);
+            break;
+        case 'S':
+            rotateDown(colisionTester);
+            break;
+    }
+
+    if (colidesWithSceneObjects(colisionTester, [currentPiece.uuid])) {
+        canMove = false;
+    }
+
+    scene.remove(colisionTester);
+    colisionEnabled = true;
+    return canMove;
 }
 
 document.addEventListener('keypress', (event) => {
@@ -123,40 +187,83 @@ document.addEventListener('keypress', (event) => {
         console.log(scene.children);
     }
 
-    if (event.key === 'a') {
-        if (currentPiece) {
-            currentPiece.position.x -= 1;
-        }
-    }
-    if (event.key === 'd') {
-        if (currentPiece) {
-            currentPiece.position.x += 1;
-        }
-    }
-    if (event.key === 'w') {
-        if (currentPiece) {
-            currentPiece.position.z -= 1;
-        }
-    }
-    if (event.key === 's') {
-        if (currentPiece) {
-            currentPiece.position.z += 1;
-        }
+    if (event.key === 'a' && possibleToMove('a')) {
+        moveLeft(currentPiece);
     }
 
-    if (event.key === 'A') {
-        if (currentPiece) {
-            currentPiece.rotation.y += Math.PI / 2;
-        }
+    switch (event.key) {
+        // case 'a':
+        //     moveLeft(currentPiece);
+        //     break;
+        case 'd':
+            moveRight(currentPiece);
+            break;
+        case 'w':
+            moveUp(currentPiece);
+            break;
+        case 's':
+            moveDown(currentPiece);
+            break;
+        case 'A':
+            rotateClockwise(currentPiece);
+            break;
+        case 'D':
+            rotateCounterClockwise(currentPiece);
+            break;
+        case 'W':
+            rotateUp(currentPiece);
+            break;
+        case 'S':
+            rotateDown(currentPiece);
+            break;
     }
-    if (event.key === 'D') {
-        if (currentPiece) {
-            currentPiece.rotation.y -= Math.PI / 2;
-        }
+})
+
+
+function moveLeft(piece) {
+    if(piece) {
+        piece.position.x += -1;
     }
-    if (event.key === 'W') {
-        if (currentPiece) {
-            currentPiece.rotation.x += Math.PI / 2;
-        }
+}
+
+function moveRight(piece) {
+    if (piece) {
+        piece.position.x += 1;
     }
-});
+}
+
+function moveUp(piece) {
+    if (piece) {
+        piece.position.z -= 1;
+    }
+}
+
+function moveDown(piece) {
+    if (piece) {
+        piece.position.z += 1;
+    }
+}
+
+function rotateClockwise(piece) {
+    if (piece) {
+        piece.rotation.y += Math.PI / 2;
+    }
+}
+
+function rotateCounterClockwise(piece) {
+    if (piece) {
+        piece.rotation.y -= Math.PI / 2;
+    }
+}
+
+function rotateUp(piece) {
+    if (piece) {
+        piece.rotation.x += Math.PI / 2;
+    }
+}
+
+function rotateDown(piece) {
+    if (piece) {
+        piece.rotation.x -= Math.PI / 2;
+    }
+}

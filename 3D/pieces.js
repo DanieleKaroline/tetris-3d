@@ -1,29 +1,35 @@
 import * as THREE from 'three';
 
 export function createCube(color) {
-    const geometry = new THREE.BoxGeometry(.9999, .9999, .9999);
-    const material = new THREE.MeshToonMaterial({ color, wireframe: true });
-    return new THREE.Mesh(geometry, material);
+    const geometry = new THREE.BoxGeometry();
+    const edges = new THREE.EdgesGeometry(geometry);
+    const material = new THREE.MeshToonMaterial({ color });
+    const mesh = new THREE.Mesh(geometry, material);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const wireframe = new THREE.LineSegments(edges, lineMaterial);
+    mesh.add(wireframe);
+    return mesh;
 }
 
 export function getRandomPiece() {
     const pieces = [
-        // createIPiece, 
+        createIPiece, 
         createOPiece, 
-        // createZPiece, 
-        // createLPiece, 
-        // createTPiece, 
-        // createJPiece, 
-        // createSPiece
+        createZPiece, 
+        createLPiece, 
+        createTPiece, 
+        createJPiece, 
+        createSPiece
     ];
     const index = Math.floor(Math.random() * pieces.length);
+    console.log(`Called ${pieces[index].name}`);
     return pieces[index]();
 }
 
 export function createIPiece() {
     const group = new THREE.Group();
-    const color = 0x00f0f0; 
-    for (let i = 0; i < 4; i += 1) {
+    const color = getRandomCOlor(); 
+    for (let i = -1; i <= 2; i += 1) {
         const cube = createCube(color);
         cube.position.set(i, 0, 0);
         group.add(cube);
@@ -33,12 +39,12 @@ export function createIPiece() {
 
 export function createOPiece() {
     const group = new THREE.Group();
-    const color = 0x00f0f0; 
+    const color = getRandomCOlor(); 
     const positions = [
         { x: 0, y: 0, z: 0 },
         { x: 1, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 },
-        { x: 1, y: 1, z: 0 }
+        { x: 0, y: -1, z: 0 },
+        { x: 1, y: -1, z: 0 }
     ];
     positions.forEach(pos => {
         const cube = createCube(color);
@@ -50,12 +56,12 @@ export function createOPiece() {
 
 export function createZPiece() {
     const group = new THREE.Group();
-    const color = 0xff0000; 
+    const color = getRandomCOlor();
     const positions = [
-        { x: 1, y: 0, z: 0 },
+        { x: -1, y: 0, z: 0 },
         { x: 0, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 },
-        { x: 1, y: 1, z: 0 }
+        { x: 0, y: -1, z: 0 },
+        { x: 1, y: -1, z: 0 }
     ];
     positions.forEach(pos => {
         const cube = createCube(color);
@@ -67,12 +73,12 @@ export function createZPiece() {
 
 export function createLPiece() {
     const group = new THREE.Group();
-    const color = 0xffa500; 
+    const color = getRandomCOlor(); 
     const positions = [
-        { x: 1, y: 0, z: 0 },
+        { x: -1, y: 0, z: 0 },
         { x: 0, y: 0, z: 0 },
         { x: 1, y: 0, z: 0 },
-        { x: 1, y: 1, z: 0 }
+        { x: 1, y: -1, z: 0 }
     ];
     positions.forEach(pos => {
         const cube = createCube(color);
@@ -84,12 +90,12 @@ export function createLPiece() {
 
 export function createTPiece() {
     const group = new THREE.Group();
-    const color = 0x800080; 
+    const color = getRandomCOlor(); 
     const positions = [
-        { x: 1, y: 0, z: 0 },
+        { x: -1, y: 0, z: 0 },
         { x: 0, y: 0, z: 0 },
         { x: 1, y: 0, z: 0 },
-        { x: 0, y: 1, z: 0 }
+        { x: 0, y: -1, z: 0 }
     ];
     positions.forEach(pos => {
         const cube = createCube(color);
@@ -101,12 +107,12 @@ export function createTPiece() {
 
 export function createJPiece() {
     const group = new THREE.Group();
-    const color = 0x0000ff; 
+    const color = getRandomCOlor(); 
     const positions = [
-        { x: 1, y: 0, z: 0 },
+        { x: -1, y: 0, z: 0 },
         { x: 0, y: 0, z: 0 },
         { x: 1, y: 0, z: 0 },
-        { x: 1, y: 1, z: 0 }
+        { x: -1, y: -1, z: 0 }
     ];
     positions.forEach(pos => {
         const cube = createCube(color);
@@ -118,10 +124,10 @@ export function createJPiece() {
 
 export function createSPiece() {
     const group = new THREE.Group();
-    const color = 0x00ff00; 
+    const color = getRandomCOlor(); 
     const positions = [
-        { x: 1, y: 1, z: 0 },
-        { x: 0, y: 1, z: 0 },
+        { x: -1, y: -1, z: 0 },
+        { x: 0, y: -1, z: 0 },
         { x: 0, y: 0, z: 0 },
         { x: 1, y: 0, z: 0 }
     ];
@@ -131,4 +137,32 @@ export function createSPiece() {
         group.add(cube);
     });
     return group;
+}
+
+// return from an array of pastel colors
+function getRandomCOlor() {
+    const colors = [
+        0xffc0cb,  // Light Pink
+        0xffe4b5,  // Moccasin
+        0xdda0dd,  // Plum
+        0xadd8e6,  // Light Blue
+        0x98fb98,  // Pale Green
+        0xffdab9,  // Peach Puff
+        0xffb6c1,  // Light Coral
+        0xffefd5,  // Papaya Whip
+        0xfffacd,  // Lemon Chiffon
+        0xe6e6fa,  // Lavender
+        0xd8bfd8,  // Thistle
+        0xd3ffce,  // Light Sea Green
+        0xf5deb3,  // Wheat
+        0xffffe0,  // Light Yellow
+        0x87cefa,  // Light Sky Blue
+        0xafeeee,  // Pale Turquoise
+        0xf0e68c,  // Khaki
+        0xe0ffff,  // Light Cyan
+        0xf5f5dc,  // Beige
+        0xfff0f5   // Lavender Blush
+    ];    
+    const index = Math.floor(Math.random() * colors.length);
+    return colors[index];
 }
