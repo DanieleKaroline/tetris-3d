@@ -80,7 +80,7 @@ function dropPiece() {
 
 function updatePiecePosition() {
     if (currentPiece && colisionEnabled) {
-        currentPiece.position.y -= 1;
+        currentPiece.position.y -= .9;
 
         if (colidesWithSceneObjects(currentPiece)) {
             currentPiece.position.y += 1;
