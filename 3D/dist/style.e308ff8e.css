@@ -1,0 +1,21 @@
+body { margin: 0;}
+canvas {
+    display: block; 
+}
+button {
+	-webkit-appearance: none;	
+	font-family: Courier;
+	font-size: 12pt;
+	text-align: center;
+	position: absolute;
+	min-width: 80px;
+	border-radius: 0;
+	z-index: 1;
+}
+
+.pauseButton {
+	right: 20px;
+	top: 10px;
+}
+
+/*# sourceMappingURL=/style.e308ff8e.css.map */

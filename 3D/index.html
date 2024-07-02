@@ -6,8 +6,24 @@
     <title>Tetris 3D</title>
     <script type="stylesheet" src="style.css"></script>
     <style>
-        body { margin: 0;}
+        body { margin: 0; }
         canvas { display: block; }
+        #startGameButton{
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            z-index: 100; /* Ensure the button is above the canvas */
+            width: 150px;
+            height: 40px;
+            font-size: medium;
+            background-color: #8583d4;
+            border-style: none;
+            border-radius: 2%;
+            color: aliceblue;
+        }
+        #startGameButton:hover{
+            background-color: #95c6fd;
+        }
     </style>
 </head>
 <body>

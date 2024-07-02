@@ -5,7 +5,7 @@ import { getRandomPiece } from './pieces.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-
+renderer.setClearColor(0xbdd9c3);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 camera.position.set(6, 5, 30);
@@ -56,7 +56,7 @@ function addLights() {
 function createThreeSidedGrid() {
     const size = 10;
     const divisions = 10; 
-    const color = new THREE.Color("gray"); 
+    const color = new THREE.Color("black"); 
 
     const group = new THREE.Group();
     group.name = "Grids"
