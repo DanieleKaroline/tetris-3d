@@ -140,7 +140,7 @@ function checkCollision(group1, group2) {
 }
 
 // direction is a char for the wasd or WASD keys
-function boundryCheck(direction) {
+function possibleToMove(direction) {
     if (gameOver || !currentPiece) {
         console.log("Game Over or no current piece");
         return false;
@@ -198,10 +198,14 @@ document.addEventListener('keypress', (event) => {
         console.log(scene.children);
     }
 
+    if (event.key === 'a' && possibleToMove('a')) {
+        moveLeft(currentPiece);
+    }
+
     switch (event.key) {
-        case 'a':
-            moveLeft(currentPiece);
-            break;
+        // case 'a':
+        //     moveLeft(currentPiece);
+        //     break;
         case 'd':
             moveRight(currentPiece);
             break;
