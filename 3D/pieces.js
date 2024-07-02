@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export function createCube(color) {
-    const geometry = new THREE.BoxGeometry(.999,.999,.999);
+    const geometry = new THREE.BoxGeometry(.999, 1,.999);
     const edges = new THREE.EdgesGeometry(geometry);
     const material = new THREE.MeshToonMaterial({ color });
     const mesh = new THREE.Mesh(geometry, material);

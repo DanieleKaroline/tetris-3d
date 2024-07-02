@@ -83,14 +83,14 @@ function dropPiece() {
     if (currentPiece === null) {
         currentPiece = getRandomPiece();
         currentPiece.position.y = 4.5;
-        currentPiece.name = `Piece (${scene.children.length})`;
+        currentPiece.name = `Piece (${scene.children.length - 5})`;
         scene.add(currentPiece);
     }
 }
 
 function updatePiecePosition() {
     if (currentPiece && colisionEnabled) {
-        currentPiece.position.y -= .9;
+        currentPiece.position.y -= 1;
 
         if (colidesWithSceneObjects(currentPiece)) {
             currentPiece.position.y += 1;
@@ -109,10 +109,39 @@ function updatePiecePosition() {
 
 function colidesWithSceneObjects(piece, excludedGroupsUuid = []) {
     // Check for collision with all other pieces in the scene
-    for (let otherPiece of scene.children) {
-        if (otherPiece !== piece && !excludedGroupsUuid.includes(otherPiece.uuid) && checkCollision(piece, otherPiece)) {
+    for (let sceneChild of scene.children) {
+        if (sceneChild !== piece) {
+
+            // if(piece.name === "Colision Tester") {
+            //     console.log("checking collision with", sceneChild.name, "and ", piece.name);
+            // }
+
+            if(piece.name === "Colision Tester" && sceneChild.name.includes("Piece")) {
+                console.log("1st if");
+            }
+
+            if(!excludedGroupsUuid.includes(sceneChild.uuid)){
+            
+                
+                if(piece.name === "Colision Tester" && sceneChild.name.includes("Piece")) {
+                    console.log("2nd if");
+                }
+             
+                if (checkCollision(piece, sceneChild)) {
+
+
+                    if(piece.name === "Colision Tester" && sceneChild.name.includes("Piece")) {
+                        console.log("why???");
+                    }
+
+                    return true;
+                }
+            }
+
+
+
             // Collision detected, stop moving the current piece
-            return true;
+            // return true;
         }
     }
 
@@ -121,10 +150,10 @@ function colidesWithSceneObjects(piece, excludedGroupsUuid = []) {
 
 function checkCollision(group1, group2) {
     for (let obj1 of group1.children) {
-        const box1 = new THREE.Box3().setFromObject(obj1);
+        let box1 = new THREE.Box3().setFromObject(obj1);
 
         for (let obj2 of group2.children) {
-            const box2 = new THREE.Box3().setFromObject(obj2);
+            let box2 = new THREE.Box3().setFromObject(obj2);
 
             if (box1.intersectsBox(box2)) {
                 console.log("Collision detected between:\n\t", 
@@ -146,10 +175,14 @@ function possibleToMove(direction) {
         return false;
     }
 
+    console.log("Checking if possible to move", direction);
+
     let canMove = true;
+    
     colisionEnabled = false; // Disable colision behavior so the piece doesn't stop
 
     let colisionTester = currentPiece.clone();
+    colisionTester.name = "Colision Tester";
     colisionTester.visible = false;
     scene.add(colisionTester);
     
@@ -187,6 +220,7 @@ function possibleToMove(direction) {
 
     scene.remove(colisionTester);
     colisionEnabled = true;
+
     return canMove;
 }
 
@@ -198,35 +232,30 @@ document.addEventListener('keypress', (event) => {
         console.log(scene.children);
     }
 
+
     if (event.key === 'a' && possibleToMove('a')) {
         moveLeft(currentPiece);
     }
-
-    switch (event.key) {
-        // case 'a':
-        //     moveLeft(currentPiece);
-        //     break;
-        case 'd':
-            moveRight(currentPiece);
-            break;
-        case 'w':
-            moveUp(currentPiece);
-            break;
-        case 's':
-            moveDown(currentPiece);
-            break;
-        case 'A':
-            rotateClockwise(currentPiece);
-            break;
-        case 'D':
-            rotateCounterClockwise(currentPiece);
-            break;
-        case 'W':
-            rotateUp(currentPiece);
-            break;
-        case 'S':
-            rotateDown(currentPiece);
-            break;
+    if (event.key === 'd' && possibleToMove('d')) {
+        moveRight(currentPiece);
+    }
+    if (event.key === 'w' && possibleToMove('w')) {
+        moveUp(currentPiece);
+    }
+    if (event.key === 's' && possibleToMove('s')) {
+        moveDown(currentPiece);
+    }
+    if (event.key === 'A' && possibleToMove('A')) {
+        rotateClockwise(currentPiece);
+    }
+    if (event.key === 'D' && possibleToMove('D')) {
+        rotateCounterClockwise(currentPiece);
+    }
+    if (event.key === 'W' && possibleToMove('W')) {
+        rotateUp(currentPiece);
+    }
+    if (event.key === 'S' && possibleToMove('S')) {
+        rotateDown(currentPiece);
     }
 })
 
