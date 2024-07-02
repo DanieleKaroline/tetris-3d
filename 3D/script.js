@@ -5,6 +5,7 @@ import { getRandomPiece } from './pieces.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 camera.position.set(6, 5, 30);
@@ -19,9 +20,18 @@ init();
 function init() {
     createThreeSidedGrid();
     addLights();
-    setInterval(updatePiecePosition, 500); // Set the interval to half a second
-    animate();
+
 }
+
+document.getElementById('startGameButton').addEventListener('click', function() {
+ 
+    setInterval(updatePiecePosition, 500); // Começa a atualizar a posição da peça
+    animate(); // Começa o loop de animação
+    this.disabled = true; // Desabilita o botão após iniciar o jogo para evitar reinícios
+});
+
+// Certifique-se de que a função `init` é chamada quando a página é carregada
+init();
 
 function animate() {
     requestAnimationFrame(animate);
@@ -88,6 +98,7 @@ function updatePiecePosition() {
 
             if (currentPiece.position.y > 4.4){
                 console.log("Game Over");
+                alert("Game Over! x.x")
                 gameOver = true;
             }
 
